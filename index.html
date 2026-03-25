@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GMAT Test Order Generator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface-hover: #222632;
+    --border: #2e3347; --border-focus: #5b8cf7;
+    --text: #e4e7f1; --text-dim: #8b90a5;
+    --accent: #5b8cf7; --accent-hover: #7ba4ff; --accent-glow: rgba(91,140,247,0.15);
+    --success: #4ade80; --success-bg: rgba(74,222,128,0.1);
+    --warning: #fbbf24; --warning-bg: rgba(251,191,36,0.08);
+    --danger: #f87171;
+    --mono: 'JetBrains Mono', monospace; --sans: 'DM Sans', system-ui, sans-serif;
+    --radius: 10px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:var(--sans); background:var(--bg); color:var(--text); min-height:100vh; line-height:1.5; }
+
+  .app-header { border-bottom:1px solid var(--border); padding:20px 32px; display:flex; align-items:center; gap:16px; background:var(--surface); }
+  .app-header .logo { width:36px; height:36px; background:var(--accent); border-radius:8px; display:grid; place-items:center; font-weight:700; font-size:16px; color:#fff; flex-shrink:0; }
+  .app-header h1 { font-size:18px; font-weight:700; letter-spacing:-0.02em; }
+  .app-header .badge, .app-header .data-badge { font-size:11px; font-weight:500; padding:3px 10px; border-radius:20px; letter-spacing:0.04em; text-transform:uppercase; border:1px solid rgba(251,191,36,0.2); }
+  .app-header .badge { background:var(--warning-bg); color:var(--warning); }
+  .app-header .data-badge { background:var(--surface-hover); color:var(--text-dim); border-color:var(--border); margin-left:auto; }
+
+  .layout { display:grid; grid-template-columns:500px 1fr; min-height:calc(100vh - 77px); }
+  @media(max-width:900px){ .layout{grid-template-columns:1fr;} }
+
+  .panel-left { border-right:1px solid var(--border); padding:28px 28px 40px; display:flex; flex-direction:column; gap:0; overflow-y:auto; }
+  .panel-left h2 { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); margin-bottom:20px; }
+
+  .field-group { margin-bottom:22px; }
+  .field-group label { display:block; font-size:13px; font-weight:500; color:var(--text-dim); margin-bottom:6px; }
+  .field-group select, .field-group input[type="text"] { width:100%; padding:10px 14px; font-family:var(--sans); font-size:14px; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:var(--radius); outline:none; transition:border-color 0.2s,box-shadow 0.2s; appearance:none; -webkit-appearance:none; }
+  .field-group select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b90a5'%3E%3Cpath d='M6 8.5L1 3.5h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:36px; cursor:pointer; }
+  .field-group select:focus, .field-group input[type="text"]:focus { border-color:var(--border-focus); box-shadow:0 0 0 3px var(--accent-glow); }
+  .field-group .hint { font-size:12px; color:var(--text-dim); margin-top:5px; opacity:0.7; }
+
+  .addon-picker { display:flex; flex-direction:column; gap:10px; }
+  .addon-picker .addon-label-row { font-size:14px; font-weight:500; display:flex; justify-content:space-between; align-items:center; }
+  .addon-picker .addon-price { font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:500; }
+  .addon-buttons { display:grid; grid-template-columns:1fr 1fr; gap:0; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
+  .addon-btn { padding:11px 16px; font-family:var(--sans); font-size:14px; font-weight:600; border:none; cursor:pointer; background:var(--bg); color:var(--text-dim); transition:all 0.15s; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .addon-btn:first-child { border-right:1px solid var(--border); }
+  .addon-btn:hover { background:var(--surface-hover); }
+  .addon-btn.active-yes { background:var(--success-bg); color:var(--success); }
+  .addon-btn.active-no { background:rgba(248,113,113,0.1); color:var(--danger); }
+  .addon-btn .btn-icon { font-size:16px; }
+
+  .hidden { display:none !important; }
+  .divider { border:none; border-top:1px solid var(--border); margin:6px 0 22px; }
+
+  .btn-generate { margin-top:28px; padding:14px 20px; background:var(--accent); color:#fff; font-family:var(--sans); font-size:15px; font-weight:700; border:none; border-radius:var(--radius); cursor:pointer; transition:background 0.15s,transform 0.1s; letter-spacing:-0.01em; }
+  .btn-generate:hover { background:var(--accent-hover); }
+  .btn-generate:active { transform:scale(0.98); }
+  .btn-generate.success { background:var(--success); pointer-events:none; }
+  .form-buttons { display:flex; gap:10px; margin-top:28px; }
+  .form-buttons .btn-generate { flex:1; margin-top:0; }
+
+  .btn-reset { padding:14px 20px; background:transparent; color:var(--text-dim); font-family:var(--sans); font-size:14px; font-weight:600; border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+  .btn-reset:hover { border-color:var(--danger); color:var(--danger); background:rgba(248,113,113,0.06); }
+
+  .toast { position:fixed; top:24px; right:24px; padding:14px 22px; background:var(--surface); border:1px solid var(--success); border-radius:var(--radius); color:var(--success); font-family:var(--sans); font-size:14px; font-weight:600; display:flex; align-items:center; gap:10px; box-shadow:0 8px 30px rgba(0,0,0,0.4); transform:translateX(calc(100% + 40px)); transition:transform 0.35s cubic-bezier(0.16,1,0.3,1); z-index:1000; }
+  .toast.show { transform:translateX(0); }
+
+  .setup-guide { border-bottom:1px solid var(--border); background:var(--surface); }
+  .setup-guide-toggle { width:100%; padding:14px 32px; display:flex; align-items:center; gap:10px; background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:14px; font-weight:600; color:var(--accent); transition:background 0.15s; text-align:left; }
+  .setup-guide-toggle:hover { background:var(--surface-hover); }
+  .setup-guide-toggle .chevron { transition:transform 0.25s; flex-shrink:0; }
+  .setup-guide-toggle.open .chevron { transform:rotate(90deg); }
+  .setup-guide-toggle .new-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; background:var(--accent-glow); border:1px solid rgba(91,140,247,0.25); color:var(--accent); letter-spacing:0.06em; text-transform:uppercase; margin-left:4px; }
+  .setup-guide-content { max-height:0; overflow:hidden; transition:max-height 0.4s cubic-bezier(0.16,1,0.3,1); }
+  .setup-guide-content.open { max-height:800px; }
+  .setup-guide-inner { padding:0 32px 28px; }
+  .setup-guide-inner p.guide-intro { font-size:14px; color:var(--text-dim); margin-bottom:20px; line-height:1.6; }
+  .guide-steps { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
+  .guide-step { display:flex; gap:14px; padding:14px 16px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); align-items:flex-start; }
+  .guide-step .step-num { width:28px; height:28px; background:var(--accent); color:#fff; border-radius:50%; display:grid; place-items:center; font-size:13px; font-weight:700; flex-shrink:0; margin-top:1px; }
+  .guide-step .step-body { flex:1; min-width:0; }
+  .guide-step .step-label { font-size:12px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px; }
+  .guide-step .step-value { font-family:var(--mono); font-size:13px; color:var(--text); word-break:break-all; line-height:1.5; }
+  .guide-step .step-value.plain { font-family:var(--sans); font-size:14px; }
+  .guide-step .step-hint { font-size:12px; color:var(--text-dim); margin-top:4px; opacity:0.7; }
+  .guide-step.highlight { border-color:var(--accent); background:var(--accent-glow); }
+
+  .panel-right { padding:28px 32px 40px; display:flex; flex-direction:column; overflow:hidden; }
+  .output-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .output-header h2 { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); }
+  .output-actions { display:flex; gap:8px; }
+  .btn-copy, .btn-download { padding:7px 16px; font-family:var(--sans); font-size:13px; font-weight:600; border-radius:7px; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text); transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+  .btn-copy:hover, .btn-download:hover { border-color:var(--border-focus); background:var(--surface-hover); }
+  .btn-copy.copied { border-color:var(--success); background:var(--success-bg); color:var(--success); }
+
+  .json-output { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px 24px; overflow:auto; position:relative; }
+  .json-output pre { font-family:var(--mono); font-size:13px; line-height:1.7; color:var(--text); white-space:pre; margin:0; }
+  .json-output .placeholder { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; color:var(--text-dim); opacity:0.5; }
+  .json-output .placeholder svg { display:block; margin:0 auto 12px; opacity:0.4; }
+  .json-output .placeholder p { font-size:14px; }
+
+  .json-key { color:#7ba4ff; } .json-string { color:#4ade80; } .json-number { color:#fbbf24; }
+  .json-null { color:#f87171; font-style:italic; } .json-bracket { color:var(--text-dim); }
+
+  .product-info { margin-top:8px; padding:8px 12px; background:var(--accent-glow); border:1px solid rgba(91,140,247,0.2); border-radius:8px; font-size:12px; display:flex; justify-content:space-between; align-items:center; }
+  .product-info .pid { font-family:var(--mono); color:var(--accent); font-weight:500; }
+  .product-info .price { font-family:var(--mono); color:var(--warning); font-weight:500; }
+
+  .order-id-row { display:flex; gap:8px; align-items:stretch; }
+  .order-id-row input { flex:1; }
+  .btn-regen { width:40px; flex-shrink:0; display:grid; place-items:center; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; color:var(--text-dim); transition:all 0.15s; }
+  .btn-regen:hover { border-color:var(--border-focus); color:var(--accent); }
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="logo">G</div>
+  <h1>GMAT Test Order Generator</h1>
+  <span class="badge">Staging</span>
+  <span class="data-badge" id="dataSourceBadge" title="Loading product data...">Loading...</span>
+</header>
+
+<div class="setup-guide">
+  <button class="setup-guide-toggle" onclick="toggleGuide()" id="guideToggle">
+    <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    First time? Admin Tool Setup Guide
+    <span class="new-badge">New</span>
+  </button>
+  <div class="setup-guide-content" id="guideContent">
+    <div class="setup-guide-inner">
+      <p class="guide-intro">Before using this generator, configure the Admin Tool's REST Client to accept order payloads. Follow these steps once — after that, you only need to paste and send.</p>
+      <div class="guide-steps">
+        <div class="guide-step"><div class="step-num">1</div><div class="step-body"><div class="step-label">Navigate to</div><div class="step-value">admin.cloudstage.alpha.kaplaninc.com</div><div class="step-hint">Open in your browser, then click the Rest Client tab</div></div></div>
+        <div class="guide-step"><div class="step-num">2</div><div class="step-body"><div class="step-label">URL Field</div><div class="step-value">https://k3po.svc.cloudstage.alpha.kaplaninc.com/order/create</div></div></div>
+        <div class="guide-step"><div class="step-num">3</div><div class="step-body"><div class="step-label">Method</div><div class="step-value plain">POST</div></div></div>
+        <div class="guide-step"><div class="step-num">4</div><div class="step-body"><div class="step-label">Service User</div><div class="step-value plain">Acceptance Tests</div></div></div>
+        <div class="guide-step"><div class="step-num">5</div><div class="step-body"><div class="step-label">Content-Type</div><div class="step-value">application/json</div></div></div>
+        <div class="guide-step highlight"><div class="step-num">6</div><div class="step-body"><div class="step-label">Body → Raw Input</div><div class="step-value plain">Paste the generated JSON into this field</div><div class="step-hint">Use the Copy button from this tool, then paste into the Raw Input text area</div></div></div>
+        <div class="guide-step"><div class="step-num">7</div><div class="step-body"><div class="step-label">Submit</div><div class="step-value plain">Click "Send request"</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="panel-left">
+    <h2>Order Configuration</h2>
+    <div class="field-group"><label for="createdBy">Created By</label><input type="text" id="createdBy" placeholder="Your name" autocomplete="off"></div>
+    <div class="field-group"><label for="orderId">External Order ID</label><div class="order-id-row"><input type="text" id="orderId" readonly><button class="btn-regen" onclick="generateOrderId()" title="Regenerate ID"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg></button></div><p class="hint">Auto-generated. Must be unique per order.</p></div>
+    <hr class="divider">
+    <div class="field-group"><label for="productSelect">Product</label><select id="productSelect"><option value="">— Select a product —</option></select><div id="productInfo" class="product-info hidden"><span>PID: <span class="pid" id="infoProductId"></span></span><span class="price" id="infoPrice"></span></div></div>
+    <div class="field-group hidden" id="optionGroup"><label for="optionSelect">Class / Session</label><select id="optionSelect"><option value="">— Select a class —</option></select></div>
+    <div class="field-group hidden" id="addonGroup">
+      <label>Add-On: Physical Book Bundle</label>
+      <div class="addon-picker">
+        <div class="addon-label-row"><span id="addonName">GMAT Live Course Physical Bundle</span><span class="addon-price" id="addonPrice">+$49.00</span></div>
+        <div class="addon-buttons">
+          <button type="button" class="addon-btn active-no" id="addonBtnExclude" onclick="setAddon(false)"><span class="btn-icon">✕</span> Exclude</button>
+          <button type="button" class="addon-btn" id="addonBtnInclude" onclick="setAddon(true)"><span class="btn-icon">✓</span> Include</button>
+        </div>
+      </div>
+      <input type="hidden" id="addonToggle" value="false">
+    </div>
+    <div class="form-buttons">
+      <button class="btn-generate" onclick="generateJSON()" id="btnGenerate">Generate JSON</button>
+      <button class="btn-reset" onclick="resetForm()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Reset</button>
+    </div>
+  </div>
+  <div class="toast" id="toast"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
+  <div class="panel-right">
+    <div class="output-header"><h2>JSON Output</h2><div class="output-actions"><button class="btn-copy" onclick="copyJSON()" id="btnCopy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button><button class="btn-download" onclick="downloadJSON()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button></div></div>
+    <div class="json-output" id="jsonOutput"><div class="placeholder"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><p>Select a product and click <strong>Generate JSON</strong></p></div></div>
+  </div>
+</div>
+
+<script>
+const CSV_URLS = {
+  sellable: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8fG1e1c8Z7gWePYsNt-O2fvf3dSM8mw1DlfK_omAGVKoZq-whETadzuy8kB81_lqbz_LNZ9uYBT22/pub?gid=1794014412&single=true&output=csv',
+  options:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8fG1e1c8Z7gWePYsNt-O2fvf3dSM8mw1DlfK_omAGVKoZq-whETadzuy8kB81_lqbz_LNZ9uYBT22/pub?gid=1861550234&single=true&output=csv',
+  addons:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8fG1e1c8Z7gWePYsNt-O2fvf3dSM8mw1DlfK_omAGVKoZq-whETadzuy8kB81_lqbz_LNZ9uYBT22/pub?gid=228134282&single=true&output=csv'
+};
+const ORDER_LOG_URL = 'https://script.google.com/a/macros/kaplan.com/s/AKfycbwEtOdpTRVLcv40YgrXXp0RkFdU68HNtNw5MHC4PAIXxKWuzbMqbUrlHT1jTushvfI3Lg/exec';
+
+const FALLBACK_PRODUCTS = [
+  {name:"MPrep GMAT Monthly Course Extension - 1 Month",kbs:"1MOXMPGMM",pid:834106,price:199,hasOption:false,hasAddon:false},
+  {name:"MPrep GMAT Course Extension - 1 Month",kbs:"1MOXMPGM",pid:834107,price:99,hasOption:false,hasAddon:false},
+  {name:"MPrep GMAT Course Extension - 2 Month",kbs:"2MOXMPGM",pid:834108,price:198,hasOption:false,hasAddon:false},
+  {name:"MPrep GMAT Course Extension - 3 Months",kbs:"3MOXMPGM",pid:834109,price:297,hasOption:false,hasAddon:false},
+  {name:"mbaMission OnTrack (3 Month)",kbs:"MPOTAD3",pid:819822,price:599,hasOption:false,hasAddon:false},
+  {name:"mbaMission OnTrack (6 Month)",kbs:"MPOTAD6",pid:833938,price:899,hasOption:false,hasAddon:false},
+  {name:"GMAT On Demand 1 Month",kbs:"MPGMATOD1",pid:820108,price:299,hasOption:false,hasAddon:false},
+  {name:"GMAT On Demand 6 Month",kbs:"MPGMATOD6",pid:820110,price:899,hasOption:false,hasAddon:true},
+  {name:"GMAT On Demand 12 Month",kbs:"MPGMATOD2",pid:820111,price:1199,hasOption:false,hasAddon:true},
+  {name:"GMAT Live Online Course",kbs:"MPGMLO",pid:845292,price:1799,hasOption:true,hasAddon:true},
+  {name:"GMAT In Person Course",kbs:"MPGMIPC",pid:845293,price:2399,hasOption:true,hasAddon:true},
+  {name:"GMAT Live Online Bootcamp Course",kbs:"MPGMLOB",pid:857843,price:2899,hasOption:true,hasAddon:false},
+  {name:"GMAT Tutoring - Online (10 Hours)",kbs:"MPGMTUO10",pid:824199,price:3499,hasOption:false,hasAddon:true},
+  {name:"GMAT Tutoring - Online (20 Hours)",kbs:"MPGMTUO20",pid:824200,price:6399,hasOption:false,hasAddon:true},
+  {name:"GMAT Tutoring - Online (30 Hours)",kbs:"MPGMTUO30",pid:824201,price:8499,hasOption:false,hasAddon:true},
+  {name:"GMAT 655+ Course",kbs:"MPGMPRC",pid:845295,price:2499,hasOption:true,hasAddon:true},
+  {name:"GMAT Self-Study Toolkit",kbs:"MPGMSSTK",pid:858757,price:359,hasOption:false,hasAddon:true},
+  {name:"All the GMAT Bundle 8th Ed Online Resources",kbs:"MPGMB25",pid:861316,price:199,hasOption:false,hasAddon:false},
+  {name:"GMAT On Demand 1 Month to 6 Month Upgrade",kbs:"MPGMODEX6",pid:820109,price:650,hasOption:false,hasAddon:false},
+  {name:"Manhattan Prep GMAT QBank",kbs:"MPGMQB25",pid:863998,price:39,hasOption:false,hasAddon:false},
+  {name:"GMAT Tutoring Course Add-On (2 hours)",kbs:"MPGMTUL2",pid:823977,price:549,hasOption:false,hasAddon:false},
+  {name:"GMAT Tutoring Course Add-On (4 hours)",kbs:"MPGMTUL4",pid:823979,price:999,hasOption:false,hasAddon:false},
+  {name:"GMAT Tutoring - Online (1 Hour)",kbs:"MPGMTUT1",pid:823978,price:300,hasOption:false,hasAddon:false}
+];
+const FALLBACK_OPTIONS = [
+  {pid:881924,kbs:"MPGMIPC",classCode:"C2CMP26011",expected:"2026-06-21",expire:"2026-08-23"},
+  {pid:881913,kbs:"MPGMIPC",classCode:"C2CMP26007",expected:"2026-04-12",expire:"2026-06-14"},
+  {pid:881918,kbs:"MPGMIPC",classCode:"C2CMP26009",expected:"2026-05-17",expire:"2026-07-26"},
+  {pid:881921,kbs:"MPGMIPC",classCode:"C2CMP26010",expected:"2026-06-08",expire:"2026-08-03"},
+  {pid:881923,kbs:"MPGMIPC",classCode:"C2CMP26008",expected:"2026-05-07",expire:"2026-07-02"},
+  {pid:881927,kbs:"MPGMLO",classCode:"C1CMP26050",expected:"2026-06-16",expire:"2026-08-11"},
+  {pid:881929,kbs:"MPGMLO",classCode:"C1CMP26051",expected:"2026-06-21",expire:"2026-08-23"},
+  {pid:881931,kbs:"MPGMLO",classCode:"C1CMP26052",expected:"2026-06-24",expire:"2026-08-19"},
+  {pid:881933,kbs:"MPGMLO",classCode:"C1CMP26053",expected:"2026-06-25",expire:"2026-08-20"},
+  {pid:881944,kbs:"MPGMLO",classCode:"C1CMP26036",expected:"2026-05-02",expire:"2026-07-11"},
+  {pid:881945,kbs:"MPGMLO",classCode:"C1CMP26035",expected:"2026-04-27",expire:"2026-06-29"},
+  {pid:881948,kbs:"MPGMLO",classCode:"C1CMP26037",expected:"2026-05-06",expire:"2026-07-01"},
+  {pid:881950,kbs:"MPGMLO",classCode:"C1CMP26038",expected:"2026-05-10",expire:"2026-06-10"},
+  {pid:881951,kbs:"MPGMLO",classCode:"C1CMP26039",expected:"2026-05-17",expire:"2026-07-26"},
+  {pid:881953,kbs:"MPGMLO",classCode:"C1CMP26040",expected:"2026-05-19",expire:"2026-06-21"},
+  {pid:881954,kbs:"MPGMLO",classCode:"C1CMP26041",expected:"2026-05-21",expire:"2026-07-16"},
+  {pid:881958,kbs:"MPGMLO",classCode:"C1CMP26044",expected:"2026-05-30",expire:"2026-08-01"},
+  {pid:881960,kbs:"MPGMLO",classCode:"C1CMP26046",expected:"2026-06-04",expire:"2026-07-02"},
+  {pid:881962,kbs:"MPGMLO",classCode:"C1CMP26042",expected:"2026-05-26",expire:"2026-07-21"},
+  {pid:881963,kbs:"MPGMLO",classCode:"C1CMP26045",expected:"2026-06-03",expire:"2026-07-29"},
+  {pid:881965,kbs:"MPGMLO",classCode:"C1CMP26043",expected:"2026-05-30",expire:"2026-06-27"},
+  {pid:881968,kbs:"MPGMLO",classCode:"C1CMP26047",expected:"2026-06-07",expire:"2026-08-09"},
+  {pid:881901,kbs:"MPGMLO",classCode:"C1CMP26030",expected:"2026-04-02",expire:"2026-05-28"},
+  {pid:881902,kbs:"MPGMLO",classCode:"C1CMP26034",expected:"2026-04-19",expire:"2026-06-21"},
+  {pid:881906,kbs:"MPGMLO",classCode:"C1CMP26032",expected:"2026-04-08",expire:"2026-06-03"},
+  {pid:881907,kbs:"MPGMLO",classCode:"C1CMP26031",expected:"2026-04-07",expire:"2026-05-05"},
+  {pid:881909,kbs:"MPGMLO",classCode:"C1CMP26033",expected:"2026-04-12",expire:"2026-05-10"},
+  {pid:881912,kbs:"MPGMLO",classCode:"C1CMP26054",expected:"2026-06-28",expire:"2026-08-30"},
+  {pid:881915,kbs:"MPGMLO",classCode:"C1CMP26048",expected:"2026-06-10",expire:"2026-07-12"},
+  {pid:881916,kbs:"MPGMLO",classCode:"C1CMP26049",expected:"2026-06-15",expire:"2026-08-10"},
+  {pid:881688,kbs:"MPGMLOB",classCode:"B1CMP26005",expected:"2026-05-02",expire:"2026-06-01"},
+  {pid:881689,kbs:"MPGMLOB",classCode:"B1CMP26006",expected:"2026-06-06",expire:"2026-07-06"},
+  {pid:881690,kbs:"MPGMLOB",classCode:"B1CMP26004",expected:"2026-04-11",expire:"2026-05-08"},
+  {pid:881934,kbs:"MPGMPRC",classCode:"P1CMP26012",expected:"2026-04-09",expire:"2026-06-25"},
+  {pid:881936,kbs:"MPGMPRC",classCode:"P1CMP26013",expected:"2026-04-15",expire:"2026-07-01"},
+  {pid:881937,kbs:"MPGMPRC",classCode:"P1CMP26015",expected:"2026-05-13",expire:"2026-07-29"},
+  {pid:881938,kbs:"MPGMPRC",classCode:"P1CMP26018",expected:"2026-06-14",expire:"2026-08-30"},
+  {pid:881939,kbs:"MPGMPRC",classCode:"P1CMP26019",expected:"2026-06-22",expire:"2026-07-30"},
+  {pid:881940,kbs:"MPGMPRC",classCode:"P1CMP26017",expected:"2026-05-27",expire:"2026-07-05"},
+  {pid:881941,kbs:"MPGMPRC",classCode:"P1CMP26016",expected:"2026-05-18",expire:"2026-08-10"},
+  {pid:881986,kbs:"MPGMPRC",classCode:"P1CMP26014",expected:"2026-04-28",expire:"2026-06-09"}
+];
+const FALLBACK_ADDON = {pid:712289,name:"GMAT Live Course Physical Bundle Sep2025",price:49};
+
+let PRODUCTS=[], OPTIONS=[], ADDON={...FALLBACK_ADDON}, dataSource='loading', currentJSON=null;
+const FIXED_ADDRESS = {Line1:"332 Front St",Line2:"Fl 1",City:"La Crosse",RegionCode:"WI",CountryCode:"US",PostalCode:"54601",ShipToName:""};
+
+function parseCSV(text) {
+  const rows=[]; let cur='',inQ=false,row=[];
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(inQ){if(c==='"'&&text[i+1]==='"'){cur+='"';i++}else if(c==='"'){inQ=false}else{cur+=c}}
+    else{if(c==='"'){inQ=true}else if(c===','){row.push(cur.trim());cur=''}
+    else if(c==='\n'||(c==='\r'&&text[i+1]==='\n')){row.push(cur.trim());if(row.some(x=>x!==''))rows.push(row);row=[];cur='';if(c==='\r')i++}
+    else{cur+=c}}}
+  if(cur||row.length){row.push(cur.trim());rows.push(row)} return rows;
+}
+
+async function loadFromSheets(){
+  try{
+    const[sR,oR,aR]=await Promise.all([fetch(CSV_URLS.sellable),fetch(CSV_URLS.options),fetch(CSV_URLS.addons)]);
+    if(!sR.ok||!oR.ok||!aR.ok) throw new Error('fetch failed');
+    const[sT,oT,aT]=await Promise.all([sR.text(),oR.text(),aR.text()]);
+
+    const oRows=parseCSV(oT);
+    const pOpts=oRows.slice(1).map(r=>({pid:parseInt(r[0]),kbs:r[1].trim(),classCode:r[3].trim(),expected:r[4].trim(),expire:r[5].trim()})).filter(o=>!isNaN(o.pid));
+    const optKbs=new Set(pOpts.map(o=>o.kbs));
+
+    const aRows=parseCSV(aT);
+    if(aRows.length>1){const a=aRows[1]; ADDON={pid:parseInt(a[0]),name:a[1].trim(),price:parseFloat(a[2])};}
+
+    const sRows=parseCSV(sT);
+    const pProds=sRows.slice(1).map(r=>({name:r[0].trim().replace(/\t/g,''),kbs:r[2].trim(),pid:parseInt(r[3]),price:parseFloat(r[7]),hasOption:optKbs.has(r[2].trim()),hasAddon:(r[8]||'').trim().toLowerCase()==='addon'})).filter(p=>!isNaN(p.pid)&&!isNaN(p.price));
+    if(pProds.length===0) throw new Error('No products');
+    PRODUCTS=pProds; OPTIONS=pOpts; dataSource='live';
+    console.log('Loaded from Sheets:',PRODUCTS.length,'products,',OPTIONS.length,'options');
+  }catch(e){
+    console.warn('Sheets failed, using fallback:',e);
+    PRODUCTS=[...FALLBACK_PRODUCTS]; OPTIONS=[...FALLBACK_OPTIONS]; ADDON={...FALLBACK_ADDON}; dataSource='fallback';
+  }
+}
+
+function updateDataSourceBadge(){
+  const b=document.getElementById('dataSourceBadge');
+  if(dataSource==='live'){b.textContent='Live Data';b.style.background='rgba(74,222,128,0.1)';b.style.color='#4ade80';b.style.borderColor='rgba(74,222,128,0.2)';b.title='Product data loaded from Google Sheets';}
+  else{b.textContent='Offline Data';b.style.background='rgba(251,191,36,0.08)';b.style.color='#fbbf24';b.style.borderColor='rgba(251,191,36,0.2)';b.title='Could not reach Google Sheets — using built-in fallback';}
+}
+
+async function init(){generateOrderId();await loadFromSheets();updateDataSourceBadge();populateProductDropdown();document.getElementById('productSelect').addEventListener('change',onProductChange);}
+
+function populateProductDropdown(){
+  const s=document.getElementById('productSelect');s.innerHTML='<option value="">— Select a product —</option>';
+  PRODUCTS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${p.name}  —  $${p.price.toLocaleString()}`;s.appendChild(o);});
+}
+
+function generateOrderId(){const t=Date.now().toString(36),r=Math.random().toString(36).substring(2,7);document.getElementById('orderId').value=`GMATOrder-${t}-${r}`;}
+
+function onProductChange(){
+  const idx=document.getElementById('productSelect').value,og=document.getElementById('optionGroup'),ag=document.getElementById('addonGroup'),pi=document.getElementById('productInfo');
+  if(idx===''){og.classList.add('hidden');ag.classList.add('hidden');pi.classList.add('hidden');return;}
+  const p=PRODUCTS[idx];
+  document.getElementById('infoProductId').textContent=p.pid;
+  document.getElementById('infoPrice').textContent=`$${p.price.toLocaleString()}.00`;pi.classList.remove('hidden');
+  if(p.hasOption){const os=document.getElementById('optionSelect');os.innerHTML='<option value="">— Select a class —</option>';
+    OPTIONS.filter(o=>o.kbs===p.kbs).sort((a,b)=>a.expected.localeCompare(b.expected)).forEach(o=>{const opt=document.createElement('option');opt.value=o.pid;opt.textContent=`${o.classCode}  •  ${o.expected} → ${o.expire}`;os.appendChild(opt);});og.classList.remove('hidden');}
+  else{og.classList.add('hidden');}
+  if(p.hasAddon){setAddon(false);document.getElementById('addonName').textContent=ADDON.name;document.getElementById('addonPrice').textContent=`+$${ADDON.price.toFixed(2)}`;ag.classList.remove('hidden');}
+  else{ag.classList.add('hidden');}
+}
+
+function setAddon(v){document.getElementById('addonToggle').value=v?'true':'false';const y=document.getElementById('addonBtnInclude'),n=document.getElementById('addonBtnExclude');if(v){y.classList.add('active-yes');n.classList.remove('active-no');}else{n.classList.add('active-no');y.classList.remove('active-yes');}}
+
+function generateJSON(){
+  const cb=document.getElementById('createdBy').value.trim();if(!cb){alert('Please enter your name in "Created By".');return;}
+  const pi=document.getElementById('productSelect').value;if(pi===''){alert('Please select a product.');return;}
+  const p=PRODUCTS[pi];
+  let oPid=null,oCode='';
+  if(p.hasOption){oPid=document.getElementById('optionSelect').value;if(!oPid){alert('Please select a class / session.');return;}oPid=parseInt(oPid);const m=OPTIONS.find(o=>o.pid===oPid);oCode=m?m.classCode:'';}
+  const addon=p.hasAddon&&document.getElementById('addonToggle').value==='true';
+  const oid=document.getElementById('orderId').value;
+  const addr={...FIXED_ADDRESS,ShipToName:cb};
+  const order={ExternalOrderID:oid,PersonID:4,Address:{...addr},Items:[{ProductID:p.pid,Price:p.price,Quantity:1,OrgCode:null,ShippingInfo:{ShippingMethodCode:"G",Address:{...addr}}}],SaleCodes:[],Payments:[],CreatedBy:cb};
+  const item=order.Items[0];item.Configuration={};
+  if(oPid){item.Configuration.Options={Products:[{ProductID:oPid}]};}
+  if(addon){item.Configuration.Addons={Price:ADDON.price,Products:[{ProductID:ADDON.pid}]};}
+  currentJSON=JSON.stringify(order,null,2);
+  currentJSON=currentJSON.replace(/"Price": (\d+\.?\d*)/g,(m,n)=>`"Price": ${parseFloat(n).toFixed(2)}`);
+  renderJSON(currentJSON);
+  logOrder({createdBy:cb,externalOrderId:oid,product:p.name,productId:String(p.pid),classSession:oCode,classSessionPid:oPid?String(oPid):'',addonIncluded:addon?'Yes':'No',addonPid:addon?String(ADDON.pid):'',paymentMethod:'Billable Account'});
+  const btn=document.getElementById('btnGenerate');btn.textContent='✓ Generated';btn.classList.add('success');
+  setTimeout(()=>{btn.textContent='Generate JSON';btn.classList.remove('success');},1500);
+  showToast('JSON generated & logged');generateOrderId();
+}
+
+async function logOrder(data){try{await fetch(ORDER_LOG_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});console.log('Logged:',data.externalOrderId);}catch(e){console.warn('Log failed:',e);}}
+
+function renderJSON(s){const c=document.getElementById('jsonOutput');const h=s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"([^"]+)"(?=\s*:)/g,'<span class="json-key">"$1"</span>').replace(/:\s*"([^"]*)"/g,(m,v)=>`: <span class="json-string">"${v}"</span>`).replace(/:\s*(\d+\.?\d*)/g,': <span class="json-number">$1</span>').replace(/:\s*null/g,': <span class="json-null">null</span>').replace(/[\[\]{}]/g,'<span class="json-bracket">$&</span>');c.innerHTML=`<pre>${h}</pre>`;}
+
+function copyJSON(){if(!currentJSON){alert('Generate a JSON payload first.');return;}navigator.clipboard.writeText(currentJSON).then(()=>{const b=document.getElementById('btnCopy');b.classList.add('copied');b.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;setTimeout(()=>{b.classList.remove('copied');b.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;},2000);});}
+
+function downloadJSON(){if(!currentJSON){alert('Generate a JSON payload first.');return;}const oid=JSON.parse(currentJSON).ExternalOrderID;const b=new Blob([currentJSON],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`${oid}.json`;a.click();URL.revokeObjectURL(a.href);}
+
+function toggleGuide(){document.getElementById('guideToggle').classList.toggle('open');document.getElementById('guideContent').classList.toggle('open');}
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function resetForm(){document.getElementById('createdBy').value='';document.getElementById('productSelect').value='';document.getElementById('optionGroup').classList.add('hidden');document.getElementById('addonGroup').classList.add('hidden');document.getElementById('productInfo').classList.add('hidden');generateOrderId();currentJSON=null;document.getElementById('jsonOutput').innerHTML=`<div class="placeholder"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><p>Select a product and click <strong>Generate JSON</strong></p></div>`;}
+
+init();
+</script>
+</body>
+</html>
