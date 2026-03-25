@@ -214,7 +214,9 @@ async function loadFromSheets(){
     
     // Using Promise.allSettled to debug individual fetch responses instead of failing all at once
     const responses = await Promise.allSettled([
-      fetch('https://script.google.com/a/macros/kaplan.com/s/AKfycbzHTcgyStA_QhHBLVHuudONo31zxwBzWF4LkrIolIjCvveOopBhWxVxM95ys9H2DJejVA/exec')
+      fetch(CSV_URLS.sellable),
+      fetch(CSV_URLS.options),
+      fetch(CSV_URLS.addons)
     ]);
 
     // Check if any requests failed due to CORS or network errors
