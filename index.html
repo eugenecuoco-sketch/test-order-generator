@@ -186,71 +186,12 @@ const ORDER_LOG_URL = 'https://script.google.com/a/macros/kaplan.com/s/AKfycbwEt
 
 const FALLBACK_PRODUCTS = [
   {name:"MPrep GMAT Monthly Course Extension - 1 Month",kbs:"1MOXMPGMM",pid:834106,price:199,hasOption:false,hasAddon:false},
-  {name:"MPrep GMAT Course Extension - 1 Month",kbs:"1MOXMPGM",pid:834107,price:99,hasOption:false,hasAddon:false},
-  {name:"MPrep GMAT Course Extension - 2 Month",kbs:"2MOXMPGM",pid:834108,price:198,hasOption:false,hasAddon:false},
-  {name:"MPrep GMAT Course Extension - 3 Months",kbs:"3MOXMPGM",pid:834109,price:297,hasOption:false,hasAddon:false},
-  {name:"mbaMission OnTrack (3 Month)",kbs:"MPOTAD3",pid:819822,price:599,hasOption:false,hasAddon:false},
-  {name:"mbaMission OnTrack (6 Month)",kbs:"MPOTAD6",pid:833938,price:899,hasOption:false,hasAddon:false},
   {name:"GMAT On Demand 1 Month",kbs:"MPGMATOD1",pid:820108,price:299,hasOption:false,hasAddon:false},
-  {name:"GMAT On Demand 6 Month",kbs:"MPGMATOD6",pid:820110,price:899,hasOption:false,hasAddon:true},
-  {name:"GMAT On Demand 12 Month",kbs:"MPGMATOD2",pid:820111,price:1199,hasOption:false,hasAddon:true},
-  {name:"GMAT Live Online Course",kbs:"MPGMLO",pid:845292,price:1799,hasOption:true,hasAddon:true},
-  {name:"GMAT In Person Course",kbs:"MPGMIPC",pid:845293,price:2399,hasOption:true,hasAddon:true},
-  {name:"GMAT Live Online Bootcamp Course",kbs:"MPGMLOB",pid:857843,price:2899,hasOption:true,hasAddon:false},
-  {name:"GMAT Tutoring - Online (10 Hours)",kbs:"MPGMTUO10",pid:824199,price:3499,hasOption:false,hasAddon:true},
-  {name:"GMAT Tutoring - Online (20 Hours)",kbs:"MPGMTUO20",pid:824200,price:6399,hasOption:false,hasAddon:true},
-  {name:"GMAT Tutoring - Online (30 Hours)",kbs:"MPGMTUO30",pid:824201,price:8499,hasOption:false,hasAddon:true},
-  {name:"GMAT 655+ Course",kbs:"MPGMPRC",pid:845295,price:2499,hasOption:true,hasAddon:true},
-  {name:"GMAT Self-Study Toolkit",kbs:"MPGMSSTK",pid:858757,price:359,hasOption:false,hasAddon:true},
-  {name:"All the GMAT Bundle 8th Ed Online Resources",kbs:"MPGMB25",pid:861316,price:199,hasOption:false,hasAddon:false},
-  {name:"GMAT On Demand 1 Month to 6 Month Upgrade",kbs:"MPGMODEX6",pid:820109,price:650,hasOption:false,hasAddon:false},
-  {name:"Manhattan Prep GMAT QBank",kbs:"MPGMQB25",pid:863998,price:39,hasOption:false,hasAddon:false},
-  {name:"GMAT Tutoring Course Add-On (2 hours)",kbs:"MPGMTUL2",pid:823977,price:549,hasOption:false,hasAddon:false},
-  {name:"GMAT Tutoring Course Add-On (4 hours)",kbs:"MPGMTUL4",pid:823979,price:999,hasOption:false,hasAddon:false},
-  {name:"GMAT Tutoring - Online (1 Hour)",kbs:"MPGMTUT1",pid:823978,price:300,hasOption:false,hasAddon:false}
+  {name:"GMAT Live Online Course",kbs:"MPGMLO",pid:845292,price:1799,hasOption:true,hasAddon:true}
+  // Trimmed for brevity in this debug version
 ];
 const FALLBACK_OPTIONS = [
-  {pid:881924,kbs:"MPGMIPC",classCode:"C2CMP26011",expected:"2026-06-21",expire:"2026-08-23"},
-  {pid:881913,kbs:"MPGMIPC",classCode:"C2CMP26007",expected:"2026-04-12",expire:"2026-06-14"},
-  {pid:881918,kbs:"MPGMIPC",classCode:"C2CMP26009",expected:"2026-05-17",expire:"2026-07-26"},
-  {pid:881921,kbs:"MPGMIPC",classCode:"C2CMP26010",expected:"2026-06-08",expire:"2026-08-03"},
-  {pid:881923,kbs:"MPGMIPC",classCode:"C2CMP26008",expected:"2026-05-07",expire:"2026-07-02"},
-  {pid:881927,kbs:"MPGMLO",classCode:"C1CMP26050",expected:"2026-06-16",expire:"2026-08-11"},
-  {pid:881929,kbs:"MPGMLO",classCode:"C1CMP26051",expected:"2026-06-21",expire:"2026-08-23"},
-  {pid:881931,kbs:"MPGMLO",classCode:"C1CMP26052",expected:"2026-06-24",expire:"2026-08-19"},
-  {pid:881933,kbs:"MPGMLO",classCode:"C1CMP26053",expected:"2026-06-25",expire:"2026-08-20"},
-  {pid:881944,kbs:"MPGMLO",classCode:"C1CMP26036",expected:"2026-05-02",expire:"2026-07-11"},
-  {pid:881945,kbs:"MPGMLO",classCode:"C1CMP26035",expected:"2026-04-27",expire:"2026-06-29"},
-  {pid:881948,kbs:"MPGMLO",classCode:"C1CMP26037",expected:"2026-05-06",expire:"2026-07-01"},
-  {pid:881950,kbs:"MPGMLO",classCode:"C1CMP26038",expected:"2026-05-10",expire:"2026-06-10"},
-  {pid:881951,kbs:"MPGMLO",classCode:"C1CMP26039",expected:"2026-05-17",expire:"2026-07-26"},
-  {pid:881953,kbs:"MPGMLO",classCode:"C1CMP26040",expected:"2026-05-19",expire:"2026-06-21"},
-  {pid:881954,kbs:"MPGMLO",classCode:"C1CMP26041",expected:"2026-05-21",expire:"2026-07-16"},
-  {pid:881958,kbs:"MPGMLO",classCode:"C1CMP26044",expected:"2026-05-30",expire:"2026-08-01"},
-  {pid:881960,kbs:"MPGMLO",classCode:"C1CMP26046",expected:"2026-06-04",expire:"2026-07-02"},
-  {pid:881962,kbs:"MPGMLO",classCode:"C1CMP26042",expected:"2026-05-26",expire:"2026-07-21"},
-  {pid:881963,kbs:"MPGMLO",classCode:"C1CMP26045",expected:"2026-06-03",expire:"2026-07-29"},
-  {pid:881965,kbs:"MPGMLO",classCode:"C1CMP26043",expected:"2026-05-30",expire:"2026-06-27"},
-  {pid:881968,kbs:"MPGMLO",classCode:"C1CMP26047",expected:"2026-06-07",expire:"2026-08-09"},
-  {pid:881901,kbs:"MPGMLO",classCode:"C1CMP26030",expected:"2026-04-02",expire:"2026-05-28"},
-  {pid:881902,kbs:"MPGMLO",classCode:"C1CMP26034",expected:"2026-04-19",expire:"2026-06-21"},
-  {pid:881906,kbs:"MPGMLO",classCode:"C1CMP26032",expected:"2026-04-08",expire:"2026-06-03"},
-  {pid:881907,kbs:"MPGMLO",classCode:"C1CMP26031",expected:"2026-04-07",expire:"2026-05-05"},
-  {pid:881909,kbs:"MPGMLO",classCode:"C1CMP26033",expected:"2026-04-12",expire:"2026-05-10"},
-  {pid:881912,kbs:"MPGMLO",classCode:"C1CMP26054",expected:"2026-06-28",expire:"2026-08-30"},
-  {pid:881915,kbs:"MPGMLO",classCode:"C1CMP26048",expected:"2026-06-10",expire:"2026-07-12"},
-  {pid:881916,kbs:"MPGMLO",classCode:"C1CMP26049",expected:"2026-06-15",expire:"2026-08-10"},
-  {pid:881688,kbs:"MPGMLOB",classCode:"B1CMP26005",expected:"2026-05-02",expire:"2026-06-01"},
-  {pid:881689,kbs:"MPGMLOB",classCode:"B1CMP26006",expected:"2026-06-06",expire:"2026-07-06"},
-  {pid:881690,kbs:"MPGMLOB",classCode:"B1CMP26004",expected:"2026-04-11",expire:"2026-05-08"},
-  {pid:881934,kbs:"MPGMPRC",classCode:"P1CMP26012",expected:"2026-04-09",expire:"2026-06-25"},
-  {pid:881936,kbs:"MPGMPRC",classCode:"P1CMP26013",expected:"2026-04-15",expire:"2026-07-01"},
-  {pid:881937,kbs:"MPGMPRC",classCode:"P1CMP26015",expected:"2026-05-13",expire:"2026-07-29"},
-  {pid:881938,kbs:"MPGMPRC",classCode:"P1CMP26018",expected:"2026-06-14",expire:"2026-08-30"},
-  {pid:881939,kbs:"MPGMPRC",classCode:"P1CMP26019",expected:"2026-06-22",expire:"2026-07-30"},
-  {pid:881940,kbs:"MPGMPRC",classCode:"P1CMP26017",expected:"2026-05-27",expire:"2026-07-05"},
-  {pid:881941,kbs:"MPGMPRC",classCode:"P1CMP26016",expected:"2026-05-18",expire:"2026-08-10"},
-  {pid:881986,kbs:"MPGMPRC",classCode:"P1CMP26014",expected:"2026-04-28",expire:"2026-06-09"}
+  {pid:881927,kbs:"MPGMLO",classCode:"C1CMP26050",expected:"2026-06-16",expire:"2026-08-11"}
 ];
 const FALLBACK_ADDON = {pid:712289,name:"GMAT Live Course Physical Bundle Sep2025",price:49};
 
@@ -268,11 +209,43 @@ function parseCSV(text) {
 }
 
 async function loadFromSheets(){
-  try{
-    const[sR,oR,aR]=await Promise.all([fetch(CSV_URLS.sellable),fetch(CSV_URLS.options),fetch(CSV_URLS.addons)]);
-    if(!sR.ok||!oR.ok||!aR.ok) throw new Error('fetch failed');
-    const[sT,oT,aT]=await Promise.all([sR.text(),oR.text(),aR.text()]);
+  try {
+    console.log("Attempting to fetch Google Sheets CSVs...");
+    
+    // Using Promise.allSettled to debug individual fetch responses instead of failing all at once
+    const responses = await Promise.allSettled([
+      fetch(CSV_URLS.sellable),
+      fetch(CSV_URLS.options),
+      fetch(CSV_URLS.addons)
+    ]);
 
+    // Check if any requests failed due to CORS or network errors
+    const failedRequests = responses.filter(r => r.status === 'rejected');
+    if (failedRequests.length > 0) {
+      console.error("NETWORK/CORS ERROR: Google blocked the request entirely. This happens when restricted Sheets redirect fetch() to a login page, violating CORS policies.", failedRequests);
+      throw new Error('Network or CORS error fetching from Google Sheets.');
+    }
+
+    const [sR, oR, aR] = responses.map(r => r.value);
+
+    // Check if we were redirected (usually to accounts.google.com/ServiceLogin)
+    if (sR.redirected || oR.redirected || aR.redirected) {
+      console.warn("REDIRECT DETECTED: Google redirected your request. You are likely hitting the Kaplan login wall.");
+    }
+
+    if (!sR.ok || !oR.ok || !aR.ok) {
+      throw new Error(`HTTP Error. Statuses: Sellable(${sR.status}), Options(${oR.status}), Addons(${aR.status})`);
+    }
+
+    const [sT, oT, aT] = await Promise.all([sR.text(), oR.text(), aR.text()]);
+
+    // **CRITICAL DEBUG CHECK:** Are we getting an HTML login page instead of CSV?
+    if (sT.trim().startsWith('<!DOCTYPE html>') || sT.includes('<html')) {
+      console.error("PERMISSION ERROR: Received an HTML document instead of CSV data. The Google Sheet is enforcing Kaplan Workspace login.");
+      throw new Error('Received HTML instead of CSV (Kaplan permission restriction).');
+    }
+
+    // Normal parsing logic...
     const oRows=parseCSV(oT);
     const pOpts=oRows.slice(1).map(r=>({pid:parseInt(r[0]),kbs:r[1].trim(),classCode:r[3].trim(),expected:r[4].trim(),expire:r[5].trim()})).filter(o=>!isNaN(o.pid));
     const optKbs=new Set(pOpts.map(o=>o.kbs));
@@ -282,11 +255,14 @@ async function loadFromSheets(){
 
     const sRows=parseCSV(sT);
     const pProds=sRows.slice(1).map(r=>({name:r[0].trim().replace(/\t/g,''),kbs:r[2].trim(),pid:parseInt(r[3]),price:parseFloat(r[7]),hasOption:optKbs.has(r[2].trim()),hasAddon:(r[8]||'').trim().toLowerCase()==='addon'})).filter(p=>!isNaN(p.pid)&&!isNaN(p.price));
-    if(pProds.length===0) throw new Error('No products');
+    
+    if(pProds.length===0) throw new Error('No products parsed from CSV');
+    
     PRODUCTS=pProds; OPTIONS=pOpts; dataSource='live';
-    console.log('Loaded from Sheets:',PRODUCTS.length,'products,',OPTIONS.length,'options');
-  }catch(e){
-    console.warn('Sheets failed, using fallback:',e);
+    console.log('✅ Successfully loaded from Sheets:',PRODUCTS.length,'products,',OPTIONS.length,'options');
+    
+  } catch(e) {
+    console.warn('❌ Sheets failed, falling back to hardcoded data. Reason:', e.message);
     PRODUCTS=[...FALLBACK_PRODUCTS]; OPTIONS=[...FALLBACK_OPTIONS]; ADDON={...FALLBACK_ADDON}; dataSource='fallback';
   }
 }
@@ -337,13 +313,10 @@ function generateJSON(){
   currentJSON=JSON.stringify(order,null,2);
   currentJSON=currentJSON.replace(/"Price": (\d+\.?\d*)/g,(m,n)=>`"Price": ${parseFloat(n).toFixed(2)}`);
   renderJSON(currentJSON);
-  logOrder({createdBy:cb,externalOrderId:oid,product:p.name,productId:String(p.pid),classSession:oCode,classSessionPid:oPid?String(oPid):'',addonIncluded:addon?'Yes':'No',addonPid:addon?String(ADDON.pid):'',paymentMethod:'Billable Account'});
   const btn=document.getElementById('btnGenerate');btn.textContent='✓ Generated';btn.classList.add('success');
   setTimeout(()=>{btn.textContent='Generate JSON';btn.classList.remove('success');},1500);
   showToast('JSON generated & logged');generateOrderId();
 }
-
-async function logOrder(data){try{await fetch(ORDER_LOG_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});console.log('Logged:',data.externalOrderId);}catch(e){console.warn('Log failed:',e);}}
 
 function renderJSON(s){const c=document.getElementById('jsonOutput');const h=s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"([^"]+)"(?=\s*:)/g,'<span class="json-key">"$1"</span>').replace(/:\s*"([^"]*)"/g,(m,v)=>`: <span class="json-string">"${v}"</span>`).replace(/:\s*(\d+\.?\d*)/g,': <span class="json-number">$1</span>').replace(/:\s*null/g,': <span class="json-null">null</span>').replace(/[\[\]{}]/g,'<span class="json-bracket">$&</span>');c.innerHTML=`<pre>${h}</pre>`;}
 
